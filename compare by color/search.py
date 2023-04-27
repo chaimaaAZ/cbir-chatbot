@@ -1,16 +1,26 @@
 import numpy as np
 import cv2
 from compare import Compare
+from index import index
 from image_color_descriptor import descriptor
 
-#cd=descriptor((4,4,4))
-cd=descriptor([10])
+method='histogram_hsv'
 
-image ='C:\\Users\\Chaimaa\\Documents\\iphone\\pictures\\2022_06_28_14_59_IMG_3199.jpg'
+if  method=='histogram_hsv' or method=='histogram_lab' :
+  bins=(4,4,4)
+elif method=='histogram_gray_scale' :
+  bins=[10]
+
+index(bins)
+
+d=descriptor(bins)
+#d=descriptor([10])
+
+image ='C:\\Users\\Chaimaa\\Documents\\iphone\\pictures\\2022_06_05_12_27_IMG_2561.jpg'
 query=cv2.imread(image)
 query=cv2.resize(query,(300,400))
 #perform the search
-features =cd.describe(query)
+features =d.describe(query)
 searcher= Compare('index2.csv')
 
 results=searcher.search(features)
