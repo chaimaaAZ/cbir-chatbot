@@ -4,6 +4,7 @@ from compare import Compare
 from index import index
 from image_color_descriptor import descriptor
 
+#just to try the commit 
 method='histogram_hsv'
 
 if  method=='histogram_hsv' or method=='histogram_lab' :
