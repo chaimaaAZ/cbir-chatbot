@@ -27,7 +27,17 @@ class descriptor :
           hist =cv2.calcHist([image],[0,1,2],mask,self.bins,[0,256]*3)
           hist=cv2.normalize(hist,hist).flatten()
           return hist 
+    
 
+    #HISTOGRAM OF CANNY filtered  IMAGE 
+    def histogram_canny(self,image,mask):
+          image =cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+          canny=cv2.Canny(image , 100 ,200)
+          hist =cv2.calcHist([canny],[0],mask,self.bins,[0,256])
+          hist=cv2.normalize(hist,hist).flatten()
+          return hist 
+    
+    
     def describe(self,image):
        #segment the image to 5 parts to be more precise 
         features=[]
@@ -48,7 +58,7 @@ class descriptor :
           #rectangle_mask= cv2.subtract(rectangle_mask,mask_ellipse)
 
           #hist=self.histogram_gray_scale(image,rectangle_mask)
-          hist=self.histogram_hsv(image,rectangle_mask)
+          hist=self.histogram_canny(image,rectangle_mask)
 
           features.extend(hist)
         #hist=self.histogram(image,mask_ellipse)

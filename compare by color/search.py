@@ -5,19 +5,20 @@ from index import index
 from image_color_descriptor import descriptor
 
 #just to try the commit 8
-method='histogram_hsv'
+method='histogram_canny'
 
 if  method=='histogram_hsv' or method=='histogram_lab' :
   bins=(4,4,4)
-elif method=='histogram_gray_scale' :
+elif method=='histogram_gray_scale' or method=='histogram_canny' :
   bins=[10]
 
+      
 index(bins)
 
 d=descriptor(bins)
 #d=descriptor([10])
 
-image ='C:\\Users\\Chaimaa\\Documents\\iphone\\pictures\\2022_06_05_12_27_IMG_2561.jpg'
+image ='C:\\Users\\Chaimaa\\Documents\\iphone\\pictures\\2022_11_18_19_35_IMG_7632.jpg'
 query=cv2.imread(image)
 query=cv2.resize(query,(300,400))
 #perform the search
