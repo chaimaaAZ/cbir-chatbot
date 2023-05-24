@@ -1,5 +1,7 @@
 import cv2
+import csv
 import numpy as np
+import glob
 import os
 
 # Fonction pour extraire la texture d'une image
@@ -26,32 +28,66 @@ def extract_texture(image):
     # Normaliser l'histogramme
     hist /= np.sum(hist)
 
-    return hist
+    return hist.flatten()
 
-# Chargement de l'image de référence
-ref_image = cv2.imread("query_image.jpg")
+def describe(image):
+    features=[]
+    
+    features.extend(extract_texture(image))
+    return features 
 
-# Extraire la texture de l'image de référence
-ref_texture = extract_texture(ref_image)
 
-# Chemin vers le dossier contenant les images du dataset
-dataset_path = "textures/"
+def index():
 
-# Parcourir toutes les images du dataset
-for filename in os.listdir(dataset_path):
-    if filename.endswith(".jpg"):
-        # Chargement de l'image du dataset
-        dataset_image = cv2.imread(os.path.join(dataset_path, filename))
+    #open the output index file for writing
+    dataset=r'C:\Users\Chaimaa\Documents\iphone\pictures'
+    index='index_texture.csv'
 
-        # Extraire la texture de l'image du dataset
-        dataset_texture = extract_texture(dataset_image)
+    file=open(index,"w")
 
-        # Calculer la distance euclidienne entre les deux textures
-        distance = np.linalg.norm(ref_texture - dataset_texture)
+    for image in glob.glob(dataset+"/*.jpg") :
+        #load image
+        img=cv2.imread(image)
+        #describe the image 
+        features = describe(img)
+        features=[str(f) for f in features]
+        file.write("%s,%s\n" % (image,",".join(features)))
+    file.close()
 
-        # Si la distance est inférieure à un certain seuil, afficher l'image
-        if distance < 0.2:
-            cv2.imshow("Similar image", dataset_image)
-            cv2.waitKey(0)
 
-cv2.destroyAllWindows()
+def eucledien_distance(self,histA,histB) :
+        d=np.sqrt(np.sum([((a - b) ** 2) for (a,b) in zip(histA,histB)]))
+        return d
+def compare(indexpath,queryfeature):
+     
+        image_distance={}
+        with open(indexpath) as f:
+            reader=csv.reader(f)
+            for row in reader :
+                features=[float(x) for x in row[1:]]
+                distance=eucledien_distance(features,queryfeature) 
+                image_distance[row[0]]=distance
+            f.close()
+        image_distance=sorted([(v,k) for (k,v) in image_distance.items()])
+        return image_distance[:10]
+
+
+
+#index()
+image ='C:\\Users\\Chaimaa\\Documents\\iphone\\pictures\\2022_11_18_19_35_IMG_7632.jpg'
+query=cv2.imread(image)
+query=cv2.resize(query,(300,400))
+#perform the search
+features =describe(query)
+results= compare('index_texture.csv',features)
+
+
+cv2.imshow("query",query)
+
+for (score,result_image) in results :
+    #load the result images and display them
+    
+    result=cv2.imread(result_image)
+    result=cv2.resize(result,(300,400))
+    cv2.imshow("result",result)
+    cv2.waitKey(0)
