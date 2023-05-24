@@ -5,15 +5,15 @@ from index import index
 from image_color_descriptor import descriptor
 
 #just to try the commit 8
-method='histogram_canny'
+method='histogram_lab'
 
 if  method=='histogram_hsv' or method=='histogram_lab' :
   bins=(4,4,4)
-elif method=='histogram_gray_scale' or method=='histogram_canny' :
+elif method=='histogram_gray_scale' or method=='histogram_canny' or method=='histogram_sobel' :
   bins=[10]
 
       
-index(bins)
+#index(bins)
 
 d=descriptor(bins)
 #d=descriptor([10])

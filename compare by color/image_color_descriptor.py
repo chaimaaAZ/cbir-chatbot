@@ -37,7 +37,17 @@ class descriptor :
           hist=cv2.normalize(hist,hist).flatten()
           return hist 
     
+    #HISTOGRAM OF sobel filtered  IMAGE 
+    def histogram_sobel(self,image,mask):
+          image =cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+          sobel = cv2.Sobel(image, cv2.CV_8UC1, 1, 0, ksize=3)
+          # Calculate histogram of normalized magnitudes
+          hist = cv2.calcHist([sobel], [0], None,self.bins, [0, 256])
+          hist=cv2.normalize(hist,hist).flatten()
+          return hist 
     
+
+
     def describe(self,image):
        #segment the image to 5 parts to be more precise 
         features=[]
@@ -58,7 +68,7 @@ class descriptor :
           #rectangle_mask= cv2.subtract(rectangle_mask,mask_ellipse)
 
           #hist=self.histogram_gray_scale(image,rectangle_mask)
-          hist=self.histogram_canny(image,rectangle_mask)
+          hist=self.histogram_lab(image,rectangle_mask)
 
           features.extend(hist)
         #hist=self.histogram(image,mask_ellipse)
