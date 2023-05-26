@@ -13,13 +13,13 @@ def index(bins):
     dataset=r'C:\Users\Chaimaa\Documents\iphone\pictures'
     index='index.json'
 
-    with open(index, "a") as f:
-
-        for image in glob.glob(dataset+"/*.jpg") :
+   
+    database_features=dict()
+    for image in glob.glob(dataset+"/*.jpg") :
             #load image
             img=cv2.imread(image)
             all_features=dict()
-            all_features['image']=image
+            all_features["index"]=image
             #describe the image 
             #color hisrogram
             colors = d.describe(img,"histogram_hsv")
@@ -30,6 +30,9 @@ def index(bins):
             #shape histogram
             shape = d.describe(img,"histogram_sobel")
             all_features['shape']=shape
-            json.dump(all_features,f)
+            database_features[image]=all_features
+
+    with open("index.json", "w") as f:
+     json.dump(database_features, f)
     
 index((4,4,4))
