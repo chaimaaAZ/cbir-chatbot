@@ -1,18 +1,20 @@
 import streamlit as st
 from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
-
-from streamlit_bokeh_events import streamlit_bokeh_events
-
+import speech_recognition as sr
 from gtts import gTTS
 from io import BytesIO
-import openai
-openai.api_key ="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"
-
+from streamlit_bokeh_events import streamlit_bokeh_events
+from google.cloud import dialogflow
 
 
 if "prompts" not in st.session_state:
     st.session_state["prompts"] = [{"role": "system", "content": "You are a helpful assistant. Answer as concisely as possible with a little humor expression."}]
+
+project_id = "tidy-tine-387913"
+credentials_path = "tidy-tine-387913-2e8dac2ce6ca.json"
+
+client = dialogflow.SessionsClient.from_service_account_json(credentials_path)
 
 def generate_response(prompt):
     if "prompts" not in st.session_state:
@@ -20,14 +22,31 @@ def generate_response(prompt):
     else:
         st.session_state["prompts"].append({"role": "user", "content": prompt})
 
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=st.session_state['prompts']
-    )
-    
-    message = completion.choices[0].message.content
-    return message
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Speak something...")
+        audio = recognizer.listen(source)
 
+    try:
+        user_input = recognizer.recognize_google_cloud(audio, credentials_json=open(credentials_path).read())
+        st.session_state['prompts'].append({"role": "user", "content": user_input})
+
+        # Use Dialogflow to generate a response
+        session = client.session_path(project_id, "unique-session-id")
+        text_input = dialogflow.TextInput(text=user_input, language_code="en")
+        query_input = dialogflow.QueryInput(text=text_input)
+        response = client.detect_intent(session=session, query_input=query_input)
+
+        # Extract the response from the Dialogflow API result
+        assistant_response = response.query_result.fulfillment_text
+        st.session_state['prompts'].append({"role": "assistant", "content": assistant_response})
+
+        return assistant_response
+
+    except sr.UnknownValueError:
+        print("Google Cloud Speech-to-Text could not understand audio.")
+    except sr.RequestError as e:
+        print(f"Could not request results from Google Cloud Speech-to-Text service; {e}")
 
 sound = BytesIO()
 
@@ -87,19 +106,19 @@ tr = st.empty()
 if 'input' not in st.session_state:
     st.session_state['input'] = dict(text='', session=0)
 
-tr.text_area("hello therer", value=st.session_state['input']['text'])
+tr.text_area("Your input", value=st.session_state['input']['text'])
 
 if result:
     if "GET_TEXT" in result:
         if result.get("GET_TEXT")["t"] != '' and result.get("GET_TEXT")["s"] != st.session_state['input']['session'] :
             st.session_state['input']['text'] = result.get("GET_TEXT")["t"]
-            tr.text_area("hello there", value=st.session_state['input']['text'])
+            tr.text_area("**Your input**", value=st.session_state['input']['text'])
             st.session_state['input']['session'] = result.get("GET_TEXT")["s"]
             pass 
         
     if "GET_INTRM" in result:
         if result.get("GET_INTRM") != '':
-            tr.text_area("hello there", value=st.session_state['input']['text']+' '+result.get("GET_INTRM"))
+            tr.text_area("**Your input**", value=st.session_state['input']['text']+' '+result.get("GET_INTRM"))
             pass
     if "GET_ONREC" in result:
         if result.get("GET_ONREC") == 'start':
@@ -112,6 +131,7 @@ if result:
             if st.session_state['input']['text'] != '':
                 input = st.session_state['input']['text']
                 output = generate_response(input)
+                print("Generated response:", output)  # Add this line for debugging
                 st.write("**ChatBot:**")
                 st.write(output)
                 st.session_state['input']['text'] = ''
