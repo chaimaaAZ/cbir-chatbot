@@ -7,12 +7,15 @@ import cv2
 import numpy as np
 import glob
 import playsound
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import math
 
 
 class Chatbot:
     def __init__(self, root):
         self.root = root
-        self.root.title('Chatbot')
+        self.root.title('FarahChaimaa ChatBot')
 
         self.query_image_path = ""
 
@@ -58,7 +61,8 @@ class Chatbot:
 
     def compare_histograms(self, histogram1, histogram2):
         return cv2.compareHist(histogram1, histogram2, cv2.HISTCMP_CORREL)
-
+    
+    
     def search_image(self, query_image_path):
         DATASET_PATH = 'database/'
 
@@ -67,34 +71,59 @@ class Chatbot:
         images_path = glob.glob(f'{DATASET_PATH}/*.jpg')
 
         results = []
+        images = []
         for image_path in images_path:
             image_histogram = self.calculate_histogram(image_path)
             similarity = self.compare_histograms(query_histogram, image_histogram)
             if similarity > 0.9:
                 results.append(image_path)
+                images.append(mpimg.imread(image_path))
 
         print(f'Found {len(results)} similar images.')
-        for result in results:
-            self.speak_result(result)
+        self.display_images(images)
 
-        print(f'Searching for images similar to {query_image_path}')
+        if len(results) == 0:
+            print("No similar images found.")
+            tts = gTTS(text=f"No similar images found.", lang='en')
+            filename = "voice.mp3"
+            tts.save(filename)
+            playsound.playsound(filename, True)
+            os.remove(filename)
 
-        # Dummy result
-        result_image_path = "path_to_result_image"
-        self.speak_result(result_image_path)
-
-    def speak_result(self, result_image_path):
-        # Convert the text to speech
-        tts = gTTS(text=f"Image found at {result_image_path}", lang='en')
-        filename = "voice.mp3"
-        tts.save(filename)
-
-        # Play the mp3 file
-        playsound.playsound(filename, True)
-        os.remove(filename)
+        if len(results) > 0:
+            tts = gTTS(text=f"{len(results)} similar images found.", lang='en')
+            filename = "voice.mp3"
+            tts.save(filename)
+            playsound.playsound(filename, True)
+            os.remove(filename)
 
 
+    def display_images(self, images):
+        sqrt = math.sqrt(len(images))
+        if sqrt == int(sqrt):
+            rows = cols = int(sqrt)
+        else:
+            rows = int(sqrt) + 1
+            cols = int(sqrt)
+
+        fig, axs = plt.subplots(rows, cols)
+        for i, img in enumerate(images):
+            ax = axs[i // cols, i % cols]
+            ax.imshow(img)
+            ax.axis('off')
+        plt.show()
+
+
+   
 if __name__ == "__main__":
     root = tk.Tk()
     app = Chatbot(root)
     root.mainloop()
+
+
+
+
+
+
+
+    
