@@ -77,12 +77,12 @@ class Chatbot:
         send_button2.grid(row=1, column=0, padx=10,pady=5)
         
         # bouton de sélection du dataset
-        select_dataset_button = Button(frame_right, text="Sélectionner le dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
+        select_dataset_button = Button(frame_right, text="Sélectionner votre dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
         select_dataset_button.grid(row=2, column=0, padx=10, pady=5)
 
     def select_dataset(self):
         dataset_path = filedialog.askdirectory()
-        # Effectuez ici les opérations nécessaires avec le chemin du dataset sélectionné
+        #les opérations nécessaires avec le chemin du dataset sélectionné
         print("Dataset sélectionné :", dataset_path)
 
    
