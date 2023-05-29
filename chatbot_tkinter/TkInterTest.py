@@ -11,7 +11,7 @@ import playsound
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import math
-
+import random
 
 BG_GRAY = "#ABB2B9"
 BG_COLOR = "#17202A"
@@ -26,9 +26,10 @@ class Chatbot:
         self.root = root
         self.root.title('FarahChaimaa ChatBot')
         self._setup_main_window()
+            
     def _setup_main_window(self):
         self.root.resizable(width=False,height=False)
-        self.root.configure(width=470,height=750,bg=BG_COLOR)
+        self.root.configure(width=450,height=750,bg=BG_COLOR)
               
         #head label
         head_label=Label(self.root,bg=BG_COLOR,fg=TEXT_COLOR,
@@ -47,13 +48,13 @@ class Chatbot:
         
         #scroll bar
         scrollbar=Scrollbar(self.text_entry)
-        scrollbar.place(relheight=1,relx=0.974)
+        scrollbar.place(relheight=0.9,relx=0.974)
         scrollbar.configure(command=self.text_entry.yview)
         
         
         # bottom label
-        bottom_label = Label(self.root, bg=BG_GRAY, height=100)
-        bottom_label.place(relwidth=1, rely=0.825)
+        bottom_label = Label(self.root, bg=BG_GRAY, height=200)
+        bottom_label.place(relwidth=1, rely=0.75)
 
         # Add some space at the bottom
         bottom_space = Label(bottom_label, bg=BG_GRAY)
@@ -67,19 +68,27 @@ class Chatbot:
         # Frame for the right section (30%)
         frame_right = Frame(bottom_label, bg=BG_GRAY)
         frame_right.grid(row=0, column=1, sticky="nsew")
-
-        # sent button "Rechercher"
-        send_button1 = Button(frame_right, text="Rechercher", font=FONT_BOLD, width=20, command=self.process_text_query)
+        
+        #chat button
+        send_button1 = Button(frame_right, text="Chat", activebackground='black',font=FONT_BOLD, width=20, command=self.process_text_query)
         send_button1.grid(row=0, column=0, padx=10,pady=5)
+        
+        # sent button "Rechercher"
+        send_button1 = Button(frame_right, text="Rechercher", activebackground='black',font=FONT_BOLD, width=20, command=self.process_text_query)
+        send_button1.grid(row=1, column=0, padx=10,pady=5)
 
         # sent button "Parler"
-        send_button2 = Button(frame_right, text="Parler", font=FONT_BOLD, width=20, bg=TEXT_COLOR, command=self.process_voice_query)
-        send_button2.grid(row=1, column=0, padx=10,pady=5)
+        send_button2 = Button(frame_right, text="Parler", activebackground='black',font=FONT_BOLD, width=20, bg=TEXT_COLOR, command=self.process_voice_query)
+        send_button2.grid(row=2, column=0, padx=10,pady=5)
         
         # bouton de sélection du dataset
-        select_dataset_button = Button(frame_right, text="Sélectionner votre dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
-        select_dataset_button.grid(row=2, column=0, padx=10, pady=5)
+        select_dataset_button = Button(frame_right,activebackground='black', text="Sélectionner votre dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
+        select_dataset_button.grid(row=3, column=0, padx=10, pady=5)
 
+        
+        
+       
+        
     def select_dataset(self):
         dataset_path = filedialog.askdirectory()
         #les opérations nécessaires avec le chemin du dataset sélectionné
@@ -97,19 +106,19 @@ class Chatbot:
         r = sr.Recognizer()
 
         with sr.Microphone() as source:
-            print('Speak Anything :')
+            print('Parlez :')
             audio = r.listen(source)
 
             try:
-                text = r.recognize_google(audio)
-                print('You said : {}'.format(text))
-
+                text = r.recognize_google(audio, language='fr-FR')
+                print('Vous avez dit : {}'.format(text))
                 if 'recherche d\'image' in text:
                     self.query_image_path = filedialog.askopenfilename()
                     self.search_image(self.query_image_path)
 
             except:
-                print('Sorry could not recognize your voice')
+                print('Désolé, je n\'ai pas pu reconnaître votre voix')
+
 
     def calculate_histogram(self, image_path):
         image = cv2.imread(image_path)
