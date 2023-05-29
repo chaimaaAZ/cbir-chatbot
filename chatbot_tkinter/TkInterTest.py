@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import *
 from tkinter import filedialog
 import speech_recognition as sr
 from gtts import gTTS
@@ -12,24 +13,93 @@ import matplotlib.image as mpimg
 import math
 
 
+BG_GRAY = "#ABB2B9"
+BG_COLOR = "#17202A"
+TEXT_COLOR = "#EAECEE"
+
+FONT = "Helvetica 14"
+FONT_BOLD = "Helvetica 13 "
+
+
 class Chatbot:
     def __init__(self, root):
         self.root = root
         self.root.title('FarahChaimaa ChatBot')
+        self._setup_main_window()
+    def _setup_main_window(self):
+        self.root.resizable(width=False,height=False)
+        self.root.configure(width=470,height=550,bg=BG_COLOR)
+              
+        #head label
+        head_label=Label(self.root,bg=BG_COLOR,fg=TEXT_COLOR,
+                         text="Welcome to our amazing chatbot",font=FONT_BOLD,pady=10)
+        head_label.place(relwidth=1)
+        
+        #tiny divider
+        line=Label(self.root,width=450,bg=BG_COLOR)
+        line.place(relwidth=1,rely=0.07,relheight=0.012)
+        
+        #text widget
+        self.text_entry=Text(self.root,width=20,height=2,bg=BG_COLOR,
+                              fg=TEXT_COLOR,font=FONT,padx=5,pady=5)
+        self.text_entry.place(relheight=0.745,relwidth=1,rely=0.08)
+        self.text_entry.configure(cursor="arrow",state=DISABLED)
+        
+        #scroll bar
+        scrollbar=Scrollbar(self.text_entry)
+        scrollbar.place(relheight=1,relx=0.974)
+        scrollbar.configure(command=self.text_entry.yview)
+        
+        
+        # bottom label
+        bottom_label = Label(self.root, bg=BG_GRAY, height=100)
+        bottom_label.place(relwidth=1, rely=0.825)
 
-        self.query_image_path = ""
+        # Add some space at the bottom
+        bottom_space = Label(bottom_label, bg=BG_GRAY)
+        bottom_space.grid(row=1, column=0, columnspan=2, sticky="nsew", pady=10)
 
-        self.text_entry = tk.Entry(self.root, width=50)
-        self.text_entry.pack()
+        # message entry box
+        self.msg_entry = Entry(bottom_label, fg=BG_COLOR, font=FONT)
+        self.msg_entry.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.msg_entry.focus()
 
-        self.submit_button = tk.Button(self.root, text='Envoyer', command=self.process_text_query)
-        self.submit_button.pack()
+        # Frame for the right section (30%)
+        frame_right = Frame(bottom_label, bg=BG_GRAY)
+        frame_right.grid(row=0, column=1, sticky="nsew")
 
-        self.voice_button = tk.Button(self.root, text='Parler', command=self.process_voice_query)
-        self.voice_button.pack()
+        # sent button "Rechercher"
+        send_button1 = Button(frame_right, text="Rechercher", font=FONT_BOLD, width=20, command=self.process_text_query)
+        send_button1.grid(row=0, column=0, padx=10,pady=5)
 
+        # sent button "Parler"
+        send_button2 = Button(frame_right, text="Parler", font=FONT_BOLD, width=20, bg=TEXT_COLOR, command=self.process_voice_query)
+        send_button2.grid(row=1, column=0, padx=10,pady=5)
+
+        
+        
+           
+        
+        
+        
+        #self.query_image_path = ""
+
+        #self.text_entry = tk.Entry(self.root, width=50)
+        #self.text_entry.pack()
+
+        #self.submit_button = tk.Button(self.root, text='Envoyer', command=self.process_text_query)
+        #self.submit_button.pack()
+
+        #self.voice_button = tk.Button(self.root, text='Parler', command=self.process_voice_query)
+        #self.voice_button.pack()
+
+   
+        
+        
+        
+        
     def process_text_query(self):
-        query = self.text_entry.get()
+        query = self.msg_entry.get()
 
         if 'recherche d\'image' in query:
             self.query_image_path = filedialog.askopenfilename()
