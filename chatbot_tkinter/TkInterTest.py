@@ -28,7 +28,7 @@ class Chatbot:
         self._setup_main_window()
     def _setup_main_window(self):
         self.root.resizable(width=False,height=False)
-        self.root.configure(width=470,height=550,bg=BG_COLOR)
+        self.root.configure(width=470,height=750,bg=BG_COLOR)
               
         #head label
         head_label=Label(self.root,bg=BG_COLOR,fg=TEXT_COLOR,
@@ -75,29 +75,17 @@ class Chatbot:
         # sent button "Parler"
         send_button2 = Button(frame_right, text="Parler", font=FONT_BOLD, width=20, bg=TEXT_COLOR, command=self.process_voice_query)
         send_button2.grid(row=1, column=0, padx=10,pady=5)
+        
+        # bouton de sélection du dataset
+        select_dataset_button = Button(frame_right, text="Sélectionner le dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
+        select_dataset_button.grid(row=2, column=0, padx=10, pady=5)
 
-        
-        
-           
-        
-        
-        
-        #self.query_image_path = ""
-
-        #self.text_entry = tk.Entry(self.root, width=50)
-        #self.text_entry.pack()
-
-        #self.submit_button = tk.Button(self.root, text='Envoyer', command=self.process_text_query)
-        #self.submit_button.pack()
-
-        #self.voice_button = tk.Button(self.root, text='Parler', command=self.process_voice_query)
-        #self.voice_button.pack()
+    def select_dataset(self):
+        dataset_path = filedialog.askdirectory()
+        # Effectuez ici les opérations nécessaires avec le chemin du dataset sélectionné
+        print("Dataset sélectionné :", dataset_path)
 
    
-        
-        
-        
-        
     def process_text_query(self):
         query = self.msg_entry.get()
 
