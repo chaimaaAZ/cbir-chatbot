@@ -20,14 +20,14 @@ def search(image):
 
     results=searcher.search(features)
 
-    
+    return results
 
-    cv2.imshow("query",query)
+    #cv2.imshow("query",query)
 
-    for (result_image,score) in results :
-        #load the result images and display them
-        result=cv2.imread(result_image)
-        result=cv2.resize(result,(300,400))
-        cv2.imshow("result",result)
-        cv2.waitKey(0)
+    #for (result_image,score) in results :
+        ##load the result images and display them
+        #result=cv2.imread(result_image)
+        #result=cv2.resize(result,(300,400))
+        #cv2.imshow("result",result)
+        #cv2.waitKey(0)
 

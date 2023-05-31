@@ -35,4 +35,4 @@ def index(dataset,bins):
     with open("index.json", "w") as f:
      json.dump(database_features, f)
     
-
+index(r"C:\Users\Chaimaa\Documents\dataset",(4,4,4))
