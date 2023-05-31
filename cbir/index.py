@@ -5,12 +5,12 @@ from descriptors import descriptor
 import json
 
 
-def index(bins):
+def index(dataset,bins):
 
     d=descriptor(bins)
 
     #open the output index file for writing
-    dataset=r'C:\Users\Chaimaa\Documents\iphone\pictures'
+    
     index='index.json'
 
    
@@ -35,4 +35,4 @@ def index(bins):
     with open("index.json", "w") as f:
      json.dump(database_features, f)
     
-index((4,4,4))
+index(r"C:\Users\Chaimaa\Documents\dataset",(4,4,4))
