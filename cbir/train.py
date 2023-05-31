@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 from model import NeuralNet
 
 
-with open(r"C:\Users\Chaimaa\Documents\data\python\image search engine 2\chatbot\training.json","r") as f:
+with open("training.json","r") as f:
     intents=json.load(f)
 
 all_words=[]
@@ -22,14 +22,16 @@ for intent in intents['intents'] :
        all_words.extend(w)
        xy.append((w,tag))
 
+#stem and lower each word 
 ignore_words=['?','!','.',',']
 
-#all_words =[stem(w) for w in all_words]
-#set()--> remove duplicate elements 
-#all_words=sorted(set(all_words))
-#tag=sorted(set(tags))
-#print(all_words)
+all_words = [stem(w) for w in all_words if w not in ignore_words]
+# remove duplicates and sort
+all_words = sorted(set(all_words))
+tags = sorted(set(tags))
 
+
+#create training data 
 X_train=[]
 Y_train=[]
 
@@ -44,6 +46,15 @@ for (pattern_sentence,tag) in xy :
 X_train=np.array(X_train)
 Y_train=np.array(Y_train)
 
+
+#hyper parameters
+batch_size=8
+hidden_size=8
+output_size=len(tags)
+input_size=len(X_train[0])
+num_epochs = 1000
+learning_rate = 0.001
+
 class ChatDataset(Dataset) :
     def __init__(self) :
         self.n_samples=len(X_train)
@@ -56,20 +67,12 @@ class ChatDataset(Dataset) :
     
     def __len__(self) :
         return self.n_samples
-#hyper parameters
-batch_size=8
-hidden_size=8
-output_size=len(tags)
-input_size=len(X_train[0])
-num_epochs = 1000
-learning_rate = 0.001
-
-
 
 
 
 dataset=ChatDataset()
 train_loader=DataLoader(dataset=dataset,batch_size=batch_size,shuffle=True,num_workers=0)
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model = NeuralNet(input_size, hidden_size, output_size).to(device)
@@ -110,7 +113,7 @@ data = {
 "tags": tags
 }
 
-FILE = "data.pth"
-torch.save(data, FILE)
 
-print(f'training complete. file saved to {FILE}')
+torch.save(data,"data.pth")
+
+print(f'training complete. file saved to"data.pth" ')

@@ -1,17 +1,11 @@
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk 
 from tkinter import filedialog
 import speech_recognition as sr
-from gtts import gTTS
-import os
-import cv2
-import numpy as np
-import glob
-import playsound
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import math
-import random
+from PIL import ImageTk, Image
+
+from chat import get_response,bot_name
 from search import search
 
 from index import index 
@@ -27,7 +21,7 @@ FONT_BOLD = "Helvetica 13 "
 class Chatbot:
     def __init__(self, root):
         self.root = root
-        self.root.title('search assistant  ChatBot')
+        self.root.title('image search assistant  ChatBot')
         self._setup_main_window()
             
     def _setup_main_window(self):
@@ -45,7 +39,7 @@ class Chatbot:
         
         #text widget
         self.text_entry=Text(self.root,width=20,height=2,bg=BG_COLOR,
-                              fg=TEXT_COLOR,font=FONT,padx=5,pady=5)
+                              fg=TEXT_COLOR,font=FONT,padx=5,pady=5,wrap=WORD)
         self.text_entry.place(relheight=0.745,relwidth=1,rely=0.08)
         self.text_entry.configure(cursor="arrow",state=DISABLED)
         
@@ -67,31 +61,67 @@ class Chatbot:
         self.msg_entry = Entry(bottom_label, fg=BG_COLOR, font=FONT)
         self.msg_entry.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         self.msg_entry.focus()
+        self.msg_entry.bind("<Return>",self._on_enter_pressed)
 
         # Frame for the right section (30%)
         frame_right = Frame(bottom_label, bg=BG_GRAY)
         frame_right.grid(row=0, column=1, sticky="nsew")
         
         #chat button
-        send_button1 = Button(frame_right, text="Chat", activebackground='black',font=FONT_BOLD, width=20, command=self.process_text_query)
+        send_button1 = Button(frame_right, text="Chat", activebackground='black',font=FONT_BOLD, width=20, command=lambda : self._on_enter_pressed(None))
         send_button1.grid(row=0, column=0, padx=10,pady=5)
         
         # sent button "Rechercher"
-        send_button1 = Button(frame_right, text="Rechercher", activebackground='black',font=FONT_BOLD, width=20, command=self.process_text_query)
-        send_button1.grid(row=1, column=0, padx=10,pady=5)
+        send_button2 = Button(frame_right, text="search image", activebackground='black',font=FONT_BOLD, width=20, command=self.process_image_query)
+        send_button2.grid(row=1, column=0, padx=10,pady=5)
 
         # sent button "Parler"
-        send_button2 = Button(frame_right, text="Parler", activebackground='black',font=FONT_BOLD, width=20, bg=TEXT_COLOR, command=self.process_voice_query)
-        send_button2.grid(row=2, column=0, padx=10,pady=5)
+        send_button3 = Button(frame_right, text="speak", activebackground='black',font=FONT_BOLD, width=20, bg=TEXT_COLOR, command=self.process_voice_query)
+        send_button3.grid(row=2, column=0, padx=10,pady=5)
         
         # bouton de sélection du dataset
         select_dataset_button = Button(frame_right,activebackground='black', text="Sélectionner votre dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
-        select_dataset_button.grid(row=3, column=0, padx=10, pady=5)
+        #select_dataset_button.grid(row=3, column=0, padx=10, pady=5)
 
         
+    #write message sent by user to gui    
+    def _on_enter_pressed(self,event) :
+        msg=self.msg_entry.get()
+        self._insert_message(msg,"you")
+    
+    def _insert_message(self,msg,sender) :
+        if not msg:
+            return 
+        self.msg_entry.delete(0,END)
+        msg1=f"{sender}:{msg}\n\n"
+        self.text_entry.configure(state=NORMAL)
+        self.text_entry.insert(END,msg1)
+        self.text_entry.configure(state=DISABLED)
+
+        #responce from bot 
+        msg2=f"{bot_name}:{get_response(msg)}\n\n"
+        self.text_entry.configure(state=NORMAL)
+        self.text_entry.insert(END,msg2)
+        self.text_entry.configure(state=DISABLED)
+
+        self.text_entry.see(END)
+    
+    def show_images(self,images) :
+        for image,_ in images :
+            # display an image label
+            image = Image.open(image)
+            image = image.resize((100, 100))
+            photo=ImageTk.PhotoImage(image)
+            self.text_entry.image_create(tk.END, image=photo)
+            self.text_entry.image = photo
+
+        self.text_entry.see(END)
+            
+
         
-       
-        
+
+
+
     def select_dataset(self):
         dataset_path = filedialog.askdirectory()
         #les opérations nécessaires avec le chemin du dataset sélectionné
@@ -101,12 +131,13 @@ class Chatbot:
 
 
    
-    def process_text_query(self):
+    def process_image_query(self):
         query = self.msg_entry.get()
 
-        if 'recherche d\'image' in query:
-            self.query_image_path = filedialog.askopenfilename()
-            search(self.query_image_path)
+       
+        self.query_image_path = filedialog.askopenfilename()
+        results = search(self.query_image_path)
+        self.show_images(results) 
 
     def process_voice_query(self):
         r = sr.Recognizer()
@@ -116,14 +147,11 @@ class Chatbot:
             audio = r.listen(source)
 
             try:
-                text = r.recognize_google(audio, language='fr-FR')
-                print('Vous avez dit : {}'.format(text))
-                if 'recherche d\'image' in text:
-                    self.query_image_path = filedialog.askopenfilename()
-                    self.search_image(self.query_image_path)
-
+                text = r.recognize_google(audio, language='en-US')
+                self._insert_message(text,"you")
+               
             except:
-                print('Désolé, je n\'ai pas pu reconnaître votre voix')
+                print('ERROR')
 
 
     
