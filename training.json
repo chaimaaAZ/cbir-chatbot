@@ -49,8 +49,17 @@
         "Do you know a joke?"
       ],
       "responses": [
-        "Why did the hipster burn his mouth? He drank the coffee before it was cool.",
-        "What did the buffalo say when his son left for college? Bison."
+        "A perfectionist walked into a bar...apparently, the bar wasn't set high enough",
+        "I ate a clock yesterday, it was very time-consuming",
+        "Never criticize someone until you've walked a mile in their shoes. That way, when you criticize them, they won't be able to hear you from that far away. Plus, you'll have their shoes.",
+        "The world tongue-twister champion just got arrested. I hear they're gonna give him a really tough sentence.",
+        "I own the world's worst thesaurus. Not only is it awful, it's awful.",
+        "What did the traffic light say to the car? \"Don't look now, I'm changing.\"",
+        "What do you call a snowman with a suntan? A puddle.",
+        "How does a penguin build a house? Igloos it together",
+        "I went to see the doctor about my short-term memory problems – the first thing he did was make me pay in advance",
+        "As I get older and I remember all the people I’ve lost along the way, I think to myself, maybe a career as a tour guide wasn’t for me.",
+        "o what if I don't know what 'Armageddon' means? It's not the end of the world."
       ]
     },
     {
@@ -74,6 +83,55 @@
     "responses": [
         "I am a general purpose chatbot. My capabilities are : \n 1. I can chat with you. Try asking me for jokes or riddles! \n 2. "
     ]
+  },
+  {
+      "tag": "whatsup",
+      "patterns": [
+          "Whats up",
+          "Wazzup",
+          "How are you",
+          "sup","How you doing"
+      ],
+      "responses": [
+          "All good..What about you?"
+      ]
+  },
+  {
+      "tag": "haha",
+      "patterns": [
+          "haha",
+          "lol",
+          "rofl",
+          "lmao",
+          "thats funny"
+      ],
+      "responses": [
+          "Glad I could make you laugh !"
+      ]
+  },
+  {
+      "tag": "programmer",
+      "patterns": [
+          "Who made you",
+          "who designed you",
+          "who programmed you"
+      ],
+      "responses": [
+          "I was made by Farah and chaimaa."
+      ]
+  },
+  {
+      "tag": "insult",
+      "patterns": [
+          
+          "you are dumb",
+          
+          "shut up",
+          "idiot"
+      ],
+      "responses": [
+          "Well that hurts :("
+      ]
   }
 
 

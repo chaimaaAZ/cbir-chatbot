@@ -3,11 +3,11 @@ from tkinter import *
 from tkinter import ttk 
 from tkinter import filedialog
 import speech_recognition as sr
-from PIL import ImageTk, Image
-
+import cv2
+import matplotlib.pyplot as plt
 from chat import get_response,bot_name
 from search import search
-
+from PIL import Image, ImageTk
 from index import index 
 
 BG_GRAY = "#ABB2B9"
@@ -42,6 +42,10 @@ class Chatbot:
                               fg=TEXT_COLOR,font=FONT,padx=5,pady=5,wrap=WORD)
         self.text_entry.place(relheight=0.745,relwidth=1,rely=0.08)
         self.text_entry.configure(cursor="arrow",state=DISABLED)
+         # Create a Canvas widget for displaying images
+        #self.image_canvas = tk.Canvas(self.root, width=200, height=200, bg=BG_COLOR)
+        #self.image_canvas.place( anchor='center')
+        #self.image_canvas.configure(state=DISABLED)
         
         #scroll bar
         scrollbar=Scrollbar(self.text_entry)
@@ -71,11 +75,11 @@ class Chatbot:
         send_button1 = Button(frame_right, text="Chat", activebackground='black',font=FONT_BOLD, width=20, command=lambda : self._on_enter_pressed(None))
         send_button1.grid(row=0, column=0, padx=10,pady=5)
         
-        # sent button "Rechercher"
+        # sent button "search"
         send_button2 = Button(frame_right, text="search image", activebackground='black',font=FONT_BOLD, width=20, command=self.process_image_query)
         send_button2.grid(row=1, column=0, padx=10,pady=5)
 
-        # sent button "Parler"
+        # sent button "speak"
         send_button3 = Button(frame_right, text="speak", activebackground='black',font=FONT_BOLD, width=20, bg=TEXT_COLOR, command=self.process_voice_query)
         send_button3.grid(row=2, column=0, padx=10,pady=5)
         
@@ -103,25 +107,11 @@ class Chatbot:
         self.text_entry.configure(state=NORMAL)
         self.text_entry.insert(END,msg2)
         self.text_entry.configure(state=DISABLED)
-
-        self.text_entry.see(END)
-    
-    def show_images(self,images) :
-        for image,_ in images :
-            # display an image label
-            image = Image.open(image)
-            image = image.resize((100, 100))
-            photo=ImageTk.PhotoImage(image)
-            self.text_entry.image_create(tk.END, image=photo)
-            self.text_entry.image = photo
-
-        self.text_entry.see(END)
-            
-
         
+        #go to end of scrollbar 
+        self.text_entry.see(END)
 
-
-
+    
     def select_dataset(self):
         dataset_path = filedialog.askdirectory()
         #les opérations nécessaires avec le chemin du dataset sélectionné
@@ -137,18 +127,55 @@ class Chatbot:
        
         self.query_image_path = filedialog.askopenfilename()
         results = search(self.query_image_path)
-        self.show_images(results) 
+        self.show_images3(results) 
+    
+    def show_images(self,images) :
+        
+        for image,_ in images :
+            # display an image label
+            #image = Image.open(image)
+            #image = image.resize((200, 200))
+            #photo=ImageTk.PhotoImage(image)
+            #self.text_entry.image_create(tk.END, image=photo)
+            #self.text_entry.image = photo
+            photo=PhotoImage(file=image)
+            self.text_entry.image_create(tk.END, '\n')
+            self.text_entry.window_create(tk.END, window=ttk.Label(self.text_entry, justify=LEFT, anchor=NW, compound=CENTER,image=photo))
+            self.text_widget.insert(tk.END, '\n')
+
+        self.text_entry.see(END)
+
+
+    def show_images3(self,images) :
+        new_frame = tk.Toplevel(self.root)  # Create a new top-level window
+        # Add widgets and configure the new frame
+        for (i, resultID) in enumerate(images):
+              # load the result image and display it
+                result = Image.open(resultID[0])
+                result = result.resize((210, 210), Image.Resampling.LANCZOS)
+                result = ImageTk.PhotoImage(result)
+                result_preview = ttk.Label(new_frame, image=result)
+                result_preview.image = result
+                result_preview.grid(row=i//5, column=i%5, sticky="s", padx=10, pady=20)
+                
+ 
+
+        
+
+
+
 
     def process_voice_query(self):
         r = sr.Recognizer()
 
         with sr.Microphone() as source:
-            print('Parlez :')
+            print('Say something:')
             audio = r.listen(source)
 
             try:
                 text = r.recognize_google(audio, language='en-US')
                 self._insert_message(text,"you")
+                print(text)
                
             except:
                 print('ERROR')
