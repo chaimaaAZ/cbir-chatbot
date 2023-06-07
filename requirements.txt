@@ -1,0 +1,7 @@
+nltk
+torch
+opencv-python
+scipy
+numpy
+pillow
+SpeechRecognition

@@ -3,8 +3,7 @@ from tkinter import *
 from tkinter import ttk 
 from tkinter import filedialog
 import speech_recognition as sr
-import cv2
-import matplotlib.pyplot as plt
+
 from chat import get_response,bot_name
 from search import search
 from PIL import Image, ImageTk
@@ -84,8 +83,8 @@ class Chatbot:
         send_button3.grid(row=2, column=0, padx=10,pady=5)
         
         # bouton de sélection du dataset
-        select_dataset_button = Button(frame_right,activebackground='black', text="Sélectionner votre dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
-        #select_dataset_button.grid(row=3, column=0, padx=10, pady=5)
+        select_dataset_button = Button(frame_right,activebackground='black', text="Select dataset", font=FONT_BOLD, width=20, command=self.select_dataset)
+        select_dataset_button.grid(row=3, column=0, padx=10, pady=5)
 
         
     #write message sent by user to gui    
@@ -115,8 +114,14 @@ class Chatbot:
     def select_dataset(self):
         dataset_path = filedialog.askdirectory()
         #les opérations nécessaires avec le chemin du dataset sélectionné
-        print("Dataset sélectionné :", dataset_path)
+        # inform the user this could take a while 
+       
+        #Index dataset 
         index(dataset_path,(4,4,4))
+        # end of indexation message
+        self.text_entry.configure(state=NORMAL)
+        self.text_entry.insert(END,"Indexation complete!!!!")
+        self.text_entry.configure(state=DISABLED)
         
 
 
@@ -129,22 +134,7 @@ class Chatbot:
         results = search(self.query_image_path)
         self.show_images3(results) 
     
-    def show_images(self,images) :
-        
-        for image,_ in images :
-            # display an image label
-            #image = Image.open(image)
-            #image = image.resize((200, 200))
-            #photo=ImageTk.PhotoImage(image)
-            #self.text_entry.image_create(tk.END, image=photo)
-            #self.text_entry.image = photo
-            photo=PhotoImage(file=image)
-            self.text_entry.image_create(tk.END, '\n')
-            self.text_entry.window_create(tk.END, window=ttk.Label(self.text_entry, justify=LEFT, anchor=NW, compound=CENTER,image=photo))
-            self.text_widget.insert(tk.END, '\n')
-
-        self.text_entry.see(END)
-
+    
 
     def show_images3(self,images) :
         new_frame = tk.Toplevel(self.root)  # Create a new top-level window
