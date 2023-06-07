@@ -117,10 +117,10 @@ class Chatbot:
         # inform the user this could take a while 
        
         #Index dataset 
-        index(dataset_path,(4,4,4))
+        index(dataset_path,(4,4,4)) 
         # end of indexation message
         self.text_entry.configure(state=NORMAL)
-        self.text_entry.insert(END,"Indexation complete!!!!")
+        self.text_entry.insert(END,f"{bot_name} :Indexation complete!!!!\n\n")
         self.text_entry.configure(state=DISABLED)
         
 
