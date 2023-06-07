@@ -26,22 +26,20 @@ https://github.com/chaimaaAZ/cbir-chatbot.git
 pip install -r requirements.txt
 ```
 3. Change the images in the database folder ```database``` with your own images if needed.
-4.  Run the indexation script, this will extract the features of the images in the database and store them in a JSON file ```index.json```
-```bash
-python index.py
-```
-5. install nltk.tokenize.punkt: Run this once in your terminal :
+
+4. install nltk.tokenize.punkt: Run this once in your terminal :
 ```
 $ python
 >>> import nltk
 >>> nltk.download('punkt')
 ```
-6. Run the training script :
+5. Run the training script :
 ```bash
 python train.py
 ```
-7. Run the main script, that will open the GUI and you can load the query image and search for similar images in the database.
+6. Run the main script, that will open the GUI and you can load the query image and search for similar images in the database.
 ```bash
 python main.py
 ```
 ## Exemple :
+1. When ```main.py```  is run, the following GUI will open.
