@@ -43,3 +43,17 @@ python main.py
 ```
 ## Exemple :
 1. When ```main.py```  is run, the following GUI will open.
+
+
+![Capture1](https://github.com/chaimaaAZ/cbir-chatbot/assets/83477952/48f2928d-9be2-4556-887b-34b77e25ad17)
+
+2. Load dataset desired by clicking on the ```Select Dataset``` button, then select dataset folder.
+
+![Capture2](https://github.com/chaimaaAZ/cbir-chatbot/assets/83477952/8d51d9a9-0550-4b98-8a34-dd7a9f9d0ddf)
+
+3. Load the query image by clicking on the ```search image``` button, then select the image from the file explorer (not necessarily from the database).
+
+![Capture3](https://github.com/chaimaaAZ/cbir-chatbot/assets/83477952/81634a9c-7991-4324-9631-8730ad0ca9a9)
+
+4.The result of the search will be displayed in a different window .
+![Capture4](https://github.com/chaimaaAZ/cbir-chatbot/assets/83477952/505daa66-649e-413a-8385-b1f18f2b81b1)
