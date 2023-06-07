@@ -3,8 +3,7 @@ from tkinter import *
 from tkinter import ttk 
 from tkinter import filedialog
 import speech_recognition as sr
-import cv2
-import matplotlib.pyplot as plt
+
 from chat import get_response,bot_name
 from search import search
 from PIL import Image, ImageTk
