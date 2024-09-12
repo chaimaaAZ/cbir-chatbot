@@ -1,4 +1,4 @@
-# image search assistant 
+# Image search assistant 
 A ChatBot capable of taking audio or text input and chat with user , it is also responsible for searching similar images from dataset based on **color , shape and texture**. 
 ## CBIR
 CBIR stands for Content-Based Image Retrieval. It is a technique used in computer vision and image processing to retrieve images from a database based on their visual content.
